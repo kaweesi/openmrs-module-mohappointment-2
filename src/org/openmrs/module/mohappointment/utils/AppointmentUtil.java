@@ -547,7 +547,7 @@ public class AppointmentUtil {
 		if (appointments != null)
 			for (Appointment appointment : appointments) {
 
-				if (appointment.getService().equals(service))
+				if (appointment.getService() != null ? appointment.getService().equals(service) : false)
 					return true;
 			}
 

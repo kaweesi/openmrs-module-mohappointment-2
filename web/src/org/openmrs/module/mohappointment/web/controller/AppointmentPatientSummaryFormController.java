@@ -24,7 +24,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
+import org.openmrs.DrugOrder;
 import org.openmrs.Obs;
+import org.openmrs.Order;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.mohappointment.model.SimplifiedObs;
@@ -52,8 +54,13 @@ public class AppointmentPatientSummaryFormController extends
 		Patient pt = Context.getPatientService().getPatient(
 				Integer.valueOf(request.getParameter("patientId")));
 		mav.addObject("patient", pt);
-		mav.addObject("dOrders", Context.getOrderService()
-				.getDrugOrdersByPatient(pt));
+		List<Order> orderList = Context.getOrderService().getOrders(pt, Context.getOrderService().getCareSettingByUuid("6f0c9a92-6f24-11e3-af88-005056821db0"), Context.getOrderService().getOrderTypeByName("Drug order"), false);//TODO, careseting should't be hard-coded to OUTPATIENT as here
+		List<DrugOrder> drugOrders = new ArrayList<>();
+		for(Order order: orderList) {
+			drugOrders.add((DrugOrder) order);
+		}
+		
+		mav.addObject("dOrders", drugOrders);
 
 		List<Concept> concList = new ArrayList<Concept>();
 		concList.add(Context.getConceptService().getConcept(2169));
